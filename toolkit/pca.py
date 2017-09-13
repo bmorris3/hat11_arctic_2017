@@ -30,10 +30,10 @@ def PCA_light_curve(pr, transit_parameters, buffer_time=5*u.min,
     best_lc : `~numpy.ndarray`
     """
     expected_mid_transit_jd = ((np.max(np.abs(pr.times - transit_parameters.t0) //
-                                       transit_parameters.per) ) * # need to add +1 here for 20170502, don't know why TMP
-                               transit_parameters.per + transit_parameters.t0)
+                                       transit_parameters.per)) * # need to add +1 here for 20170502, 20170912, don't know why TMP
+                               transit_parameters.per + 1 + transit_parameters.t0)
     mid_transit_time = Time(expected_mid_transit_jd, format='jd')
-
+    print(mid_transit_time.iso)
     transit_duration = transit_parameters.duration + buffer_time
 
     final_lc_mad = np.ones(len(pr.aperture_radii))
@@ -61,11 +61,11 @@ def PCA_light_curve(pr, transit_parameters, buffer_time=5*u.min,
 #                            mad_std(flux_i))
 #             inliers &= new_inliers
 
-            # plt.plot(pr.times, flux_i - linear_flux_trend)
-            # plt.plot(pr.times[np.logical_not(new_inliers)],
-            #          (flux_i - linear_flux_trend)[np.logical_not(new_inliers)],
-            #           'ro')
-            # plt.show()
+        # plt.plot(pr.times, flux_i - linear_flux_trend)
+        # plt.plot(pr.times[np.logical_not(new_inliers)],
+        #          (flux_i - linear_flux_trend)[np.logical_not(new_inliers)],
+        #           'ro')
+        # plt.show()
 
         out_of_transit = ((Time(pr.times, format='jd') > mid_transit_time + transit_duration/2) |
                           (Time(pr.times, format='jd') < mid_transit_time - transit_duration/2))

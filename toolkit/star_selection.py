@@ -56,11 +56,16 @@ def init_centroids(first_image_path, master_flat, master_dark, target_centroid,
                     region.weighted_centroid[1] < label_image.shape[1] - buffer_pixels))]
 
     centroids = [region.weighted_centroid for region in regions]
-    intensities = [region.mean_intensity for region in regions]
+    intensities = np.array([region.mean_intensity for region in regions])
 
-    centroids = np.array(centroids)[np.argsort(intensities)[::-1]]
+    sort_order = np.argsort(intensities)[::-1]
+    centroids = np.array(centroids)[sort_order]
+    intensities = intensities[sort_order]
 
     positions = np.vstack([[y for x, y in centroids], [x for x, y in centroids]])
+
+    flux_threshold = intensities > min_flux * intensities[0]
+    positions = positions[:, flux_threshold]
 
     if plots:
         apertures = CircularAperture(positions, r=12.)

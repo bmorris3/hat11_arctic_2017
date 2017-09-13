@@ -13,8 +13,8 @@ import numpy as np
 #  image_paths = sorted(glob('/Users/bmmorris/data/Q2UW01/UT170615/HAT-P-11.????.fits'))
 # outpath = '/Users/bmmorris/data/Q2UW01/UT170615/cleaned/'
 
-image_paths = sorted(glob('/Users/bmmorris/data/Q3UW01/UT170730/HAT-P-11.????.fits'))
-outpath = '/Users/bmmorris/data/Q3UW01/UT170730/cleaned/'
+image_paths = sorted(glob('/Users/bmmorris/data/Q3UW01/UT170912/HAT-P-11.????.fits'))
+outpath = '/Users/bmmorris/data/Q3UW01/UT170912/cleaned/'
 
 # Mask out hot pixel column from cosmic ray detection for 4x4 binning
 first_img = fits.getdata(image_paths[0])

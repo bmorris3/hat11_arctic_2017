@@ -6,7 +6,7 @@ from astropy.io import fits
 from astropy.time import Time
 from astropy.utils.console import ProgressBar
 from astropy.modeling import models, fitting
-from photutils.morphology import centroid_2dg, centroid_com
+from photutils.morphology import centroid_2dg, centroid_com, centroid_1dg
 from photutils import CircularAperture, CircularAnnulus, aperture_photometry
 
 from .star_selection import init_centroids
@@ -117,6 +117,7 @@ def photometry(image_paths, master_dark_path, master_flat_path, target_centroid,
 
                 # Measure stellar centroid with 2D gaussian fit
                 x_stamp_centroid, y_stamp_centroid = centroid_com(image_stamp)
+                #x_stamp_centroid, y_stamp_centroid = centroid_1dg(image_stamp)
                 y_centroid = x_stamp_centroid + init_x - centroid_stamp_half_width
                 x_centroid = y_stamp_centroid + init_y - centroid_stamp_half_width
 
