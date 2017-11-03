@@ -30,11 +30,11 @@ def init_centroids(first_image_path, master_flat, master_dark, target_centroid,
 
     convolution[convolution < -5*mad] = 0.0
 
-    from skimage.filters import threshold_otsu, threshold_yen
+    from skimage.filters import threshold_otsu#, threshold_yen
     from skimage.measure import label, regionprops
 
     # thresh = threshold_yen(convolution)/4
-    thresh = threshold_otsu(convolution)/15
+    thresh = threshold_otsu(image=convolution)/15
 
     masked = np.ones_like(convolution)
     masked[convolution <= thresh] = 0
@@ -55,7 +55,16 @@ def init_centroids(first_image_path, master_flat, master_dark, target_centroid,
                and (region.weighted_centroid[1] > buffer_pixels and
                     region.weighted_centroid[1] < label_image.shape[1] - buffer_pixels))]
 
-    centroids = [region.weighted_centroid for region in regions]
+    # TYC 3561-1538-1 is a delta Scuti variable. Remove it:
+    variable_star = [1790.1645248,  1153.91737674]
+    tol = 5
+    regions = [region for region in regions
+               if ((region.weighted_centroid[0] > variable_star[0] + tol) or
+                  (region.weighted_centroid[0] < variable_star[0] - tol)) and
+                  ((region.weighted_centroid[1] > variable_star[1] + tol) or
+                  (region.weighted_centroid[1] < variable_star[1] - tol))]
+
+    centroids = np.array([region.weighted_centroid for region in regions])
     intensities = np.array([region.mean_intensity for region in regions])
 
     sort_order = np.argsort(intensities)[::-1]

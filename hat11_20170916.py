@@ -8,11 +8,11 @@ from toolkit import (generate_master_flat_and_dark, photometry,
                      transit_model_b)
 
 # Image paths
-image_paths = sorted(glob('/Users/bmmorris/data/Q3UW01/UT170912/cleaned/HAT*.fits'))#[:-200]
-dark_paths = glob('/Users/bmmorris/data/Q3UW01/UT170912/dark_10s_2x2.????.fits')
-flat_paths = glob('/Users/bmmorris/data/Q3UW01/UT170912/domeflat_r.????.fits')
-master_flat_path = 'outputs/masterflat_20170912.fits'
-master_dark_path = 'outputs/masterdark_20170912.fits'
+image_paths = sorted(glob('/Users/bmmorris/data/Q3UW01/UT170916/cleaned/HAT*.fits'))#[:-200]
+dark_paths = glob('/Users/bmmorris/data/Q3UW01/UT170916/dark_10s.????.fits')
+flat_paths = glob('/Users/bmmorris/data/Q3UW01/UT170916/domeflat_r.????.fits')
+master_flat_path = 'outputs/masterflat_20170916.fits'
+master_dark_path = 'outputs/masterdark_20170916.fits'
 
 # Photometry settings
 target_centroid = np.array([[613], [750]])
@@ -23,7 +23,7 @@ psf_stddev_init = 30
 aperture_annulus_radius = 10
 transit_parameters = params_b
 
-output_path = 'outputs/hat11_20170912.npz'
+output_path = 'outputs/hat11_20170916.npz'
 force_recompute_photometry = True #False
 
 # Calculate master dark/flat:

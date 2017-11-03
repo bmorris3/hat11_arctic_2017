@@ -8,23 +8,23 @@ from toolkit import (generate_master_flat_and_dark, photometry,
                      transit_model_b)
 
 # Image paths
-image_paths = sorted(glob('/Users/bmmorris/data/Q3UW01/UT170912/cleaned/HAT*.fits'))#[:-200]
-dark_paths = glob('/Users/bmmorris/data/Q3UW01/UT170912/dark_10s_2x2.????.fits')
-flat_paths = glob('/Users/bmmorris/data/Q3UW01/UT170912/domeflat_r.????.fits')
-master_flat_path = 'outputs/masterflat_20170912.fits'
-master_dark_path = 'outputs/masterdark_20170912.fits'
+image_paths = sorted(glob('/Users/bmmorris/data/Q4UW01/UT171030/cleaned/HAT*.fits'))#[:-200]
+dark_paths = glob('/Users/bmmorris/data/Q4UW01/UT171030/dark_10s.????.fits')
+flat_paths = glob('/Users/bmmorris/data/Q4UW01/UT171030/domeflat_r.????.fits')
+master_flat_path = 'outputs/masterflat_20171030.fits'
+master_dark_path = 'outputs/masterdark_20171030.fits'
 
 # Photometry settings
 target_centroid = np.array([[613], [750]])
 comparison_flux_threshold = 0.05
-aperture_radii = np.arange(30, 50, 1)
+aperture_radii = np.arange(30, 80, 1)
 centroid_stamp_half_width = 30
 psf_stddev_init = 30
 aperture_annulus_radius = 10
 transit_parameters = params_b
 
-output_path = 'outputs/hat11_20170912.npz'
-force_recompute_photometry = True #False
+output_path = 'outputs/hat11_20171030.npz'
+force_recompute_photometry = True
 
 # Calculate master dark/flat:
 if not os.path.exists(master_dark_path) or not os.path.exists(master_flat_path):
@@ -56,9 +56,9 @@ print('Calculating PCA...')
 
 # Validate before ingress:
 light_curve = PCA_light_curve(phot_results, transit_parameters, plots=True,
-                              validation_duration_fraction=0.02,
+                              validation_duration_fraction=0.2,
                               buffer_time=5*u.min, flux_threshold=0.5,
-                              validation_time=-0.7)#, plot_validation=True)
+                              validation_time=-0.8)#, plot_validation=True)
 
 plt.figure()
 plt.plot(phot_results.times, light_curve, 'k.')

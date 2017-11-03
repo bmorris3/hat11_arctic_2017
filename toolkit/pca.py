@@ -31,9 +31,9 @@ def PCA_light_curve(pr, transit_parameters, buffer_time=5*u.min,
     """
     expected_mid_transit_jd = ((np.max(np.abs(pr.times - transit_parameters.t0) //
                                        transit_parameters.per)) * # need to add +1 here for 20170502, 20170912, don't know why TMP
-                               transit_parameters.per + 1 + transit_parameters.t0)
+                               transit_parameters.per + transit_parameters.t0)
     mid_transit_time = Time(expected_mid_transit_jd, format='jd')
-    print(mid_transit_time.iso)
+
     transit_duration = transit_parameters.duration + buffer_time
 
     final_lc_mad = np.ones(len(pr.aperture_radii))
@@ -48,22 +48,23 @@ def PCA_light_curve(pr, transit_parameters, buffer_time=5*u.min,
 #       inliers = np.ones_like(pr.fluxes[:, 0, aperture_index]).astype(bool)
 
         inliers = target_fluxes >= flux_threshold*target_fluxes.max()
+        inliers &= np.arange(len(inliers)) < len(inliers) - 50
+        # inliers = np.ones_like(pr.fluxes[:, 0, aperture_index]).astype(bool)
 
-#         inliers = np.ones_like(pr.fluxes[:, 0, aperture_index]).astype(bool)
-#
-#         for i in range(pr.fluxes.shape[1]):
-#             flux_i = pr.fluxes[:, i, aperture_index]
-#
-#             linear_flux_trend = np.polyval(np.polyfit(pr.times - pr.times.mean(),
-#                                                       flux_i, 1),
-#                                            pr.times - pr.times.mean())
-#             new_inliers = (np.abs(flux_i - linear_flux_trend) < outlier_mad_std_factor *
-#                            mad_std(flux_i))
-#             inliers &= new_inliers
+        for i in range(pr.fluxes.shape[1]):
+            flux_i = pr.fluxes[:, i, aperture_index]
 
+            linear_flux_trend = np.polyval(np.polyfit(pr.times - pr.times.mean(),
+                                                      flux_i, 2),
+                                           pr.times - pr.times.mean())
+            new_inliers = (np.abs(flux_i - linear_flux_trend) < outlier_mad_std_factor *
+                           mad_std(flux_i))
+            inliers &= new_inliers
+        # plt.figure()
+        # plt.title('outliers')
         # plt.plot(pr.times, flux_i - linear_flux_trend)
-        # plt.plot(pr.times[np.logical_not(new_inliers)],
-        #          (flux_i - linear_flux_trend)[np.logical_not(new_inliers)],
+        # plt.plot(pr.times[np.logical_not(inliers)],
+        #          (flux_i - linear_flux_trend)[np.logical_not(inliers)],
         #           'ro')
         # plt.show()
 
