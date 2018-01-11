@@ -6,7 +6,7 @@ __all__ = ['PhotometryResults']
 class PhotometryResults(object):
     def __init__(self, times, fluxes, errors, xcentroids, ycentroids, airmass,
                  airpressure, humidity, background_median, psf_stddev,
-                 aperture_radii):
+                 aperture_radii, altitude):
         self.times = times
         self.fluxes = fluxes
         self.errors = errors
@@ -18,10 +18,11 @@ class PhotometryResults(object):
         self.xcentroids = xcentroids
         self.ycentroids = ycentroids
         self.aperture_radii = aperture_radii
+        self.altitude = altitude
 
         self.attrs = ("times, fluxes, errors, airmass, airpressure, humidity, "
                       "background_median, psf_stddev, xcentroids, "
-                      "ycentroids, aperture_radii".split(', '))
+                      "ycentroids, aperture_radii, altitude".split(', '))
 
     def save(self, path):
         """

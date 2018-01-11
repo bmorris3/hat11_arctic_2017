@@ -60,7 +60,8 @@ def photometry(image_paths, master_dark_path, master_flat_path, target_centroid,
 
     master_flat[master_flat < 0.1] = 1.0 # tmp
 
-    star_positions = init_centroids(image_paths[0], master_flat, master_dark,
+    image_index = 101 # 0 for all days except 20171104 = 100
+    star_positions = init_centroids(image_paths[image_index], master_flat, master_dark,
                                     target_centroid, plots=True,
                                     min_flux=comparison_flux_threshold).T
 
@@ -77,6 +78,7 @@ def photometry(image_paths, master_dark_path, master_flat_path, target_centroid,
     humidity = np.zeros(len(image_paths))
     telfocus = np.zeros(len(image_paths))
     psf_stddev = np.zeros(len(image_paths))
+    altitude = np.zeros(len(image_paths))
 
     medians = np.zeros(len(image_paths))
 
@@ -99,6 +101,7 @@ def photometry(image_paths, master_dark_path, master_flat_path, target_centroid,
             airpress[i] = imageheader['AIRPRESS']
             humidity[i] = imageheader['HUMIDITY']
             telfocus[i] = imageheader['TELFOCUS']
+            altitude[i] = imageheader['TELALT']
 
             # Initial guess for each stellar centroid informed by previous centroid
             for j in range(len(star_positions)):
@@ -175,6 +178,6 @@ def photometry(image_paths, master_dark_path, master_flat_path, target_centroid,
     ## Save some values
     results = PhotometryResults(times, fluxes, errors, xcentroids, ycentroids,
                                 airmass, airpress, humidity, medians,
-                                psf_stddev, aperture_radii)
+                                psf_stddev, aperture_radii, altitude)
     results.save(output_path)
     return results

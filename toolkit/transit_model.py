@@ -11,22 +11,30 @@ __all__ = ['transit_model_b', 'transit_model_b_depth_t0', 'params_b']
 # from https://arxiv.org/abs/1508.07281
 # Planet b:
 params_b = batman.TransitParams()
-params_b.per = 4.8878018
+params_b.per = 4.88780258
 params_b.t0 = 2454605.89155
 params_b.inc = 89.3470
-params_b.rp = 0.058330
+params_b.rp = 0.0034**0.5
 
 # a/rs = b/cosi
-b = 0.209
+b = 0.141
 
-params_b.a = b / np.cos(np.radians(params_b.inc))
-params_b.ecc = 0
-params_b.w = 90
-params_b.u = [0.6407, 0.0477] # not updated from wasp-85
+ecosw = 0.261  # Winn et al. 2010
+esinw = 0.085  # Winn et al. 2010
+eccentricity = np.sqrt(ecosw**2 + esinw**2)
+omega = np.degrees(np.arctan2(esinw, ecosw))
+
+ecc_factor = (np.sqrt(1 - eccentricity**2) /
+              (1 + eccentricity * np.sin(np.radians(omega))))
+
+params_b.a = b / np.cos(np.radians(params_b.inc)) / ecc_factor
+params_b.ecc = eccentricity
+params_b.w = omega
+params_b.u = [0.6373, 0.0554]  # Morris+ 2017a
 params_b.limb_dark = 'quadratic'
 
 params_b.depth_error = 0.00002
-params_b.duration = 0.0957 * u.day
+params_b.duration = 0.098 * u.day
 
 
 def transit_model_b(times, params=params_b):

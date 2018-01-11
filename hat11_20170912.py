@@ -24,7 +24,7 @@ aperture_annulus_radius = 10
 transit_parameters = params_b
 
 output_path = 'outputs/hat11_20170912.npz'
-force_recompute_photometry = True #False
+force_recompute_photometry = False
 
 # Calculate master dark/flat:
 if not os.path.exists(master_dark_path) or not os.path.exists(master_flat_path):
@@ -58,7 +58,7 @@ print('Calculating PCA...')
 light_curve = PCA_light_curve(phot_results, transit_parameters, plots=True,
                               validation_duration_fraction=0.02,
                               buffer_time=5*u.min, flux_threshold=0.5,
-                              validation_time=-0.7)#, plot_validation=True)
+                              validation_time=-0.7, plot_validation=True)
 
 plt.figure()
 plt.plot(phot_results.times, light_curve, 'k.')

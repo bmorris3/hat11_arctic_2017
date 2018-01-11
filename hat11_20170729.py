@@ -8,11 +8,11 @@ from toolkit import (generate_master_flat_and_dark, photometry,
                      transit_model_b)
 
 # Image paths
-image_paths = sorted(glob('/Users/bmmorris/data/Q2UW01/UT170615/cleaned/HAT*.fits'))[100:]
-dark_paths = glob('/Users/bmmorris/data/Q2UW01/UT170615/dark_10s_2x2.????.fits')
-flat_paths = glob('/Users/bmmorris/data/Q2UW01/UT170615/domeflat_r.????.fits')
-master_flat_path = 'outputs/masterflat_20170615.fits'
-master_dark_path = 'outputs/masterdark_20170615.fits'
+image_paths = sorted(glob('/Users/bmmorris/data/Q3UW01/UT170730/cleaned/HAT*.fits'))[500:]
+dark_paths = glob('/Users/bmmorris/data/Q3UW01/UT170730/dark_4.????.fits')
+flat_paths = glob('/Users/bmmorris/data/Q3UW01/UT170730/domeflat_r.????.fits')
+master_flat_path = 'outputs/masterflat_20170729.fits'
+master_dark_path = 'outputs/masterdark_20170729.fits'
 
 # Photometry settings
 target_centroid = np.array([[613], [750]])
@@ -24,8 +24,8 @@ aperture_annulus_radius = 10
 transit_parameters = params_b
 
 
-output_path = 'outputs/hat11_20170615.npz'
-force_recompute_photometry = False
+output_path = 'outputs/hat11_20170729.npz'
+force_recompute_photometry = True
 
 # Calculate master dark/flat:
 if not os.path.exists(master_dark_path) or not os.path.exists(master_flat_path):

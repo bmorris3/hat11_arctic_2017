@@ -34,7 +34,7 @@ def init_centroids(first_image_path, master_flat, master_dark, target_centroid,
     from skimage.measure import label, regionprops
 
     # thresh = threshold_yen(convolution)/4
-    thresh = threshold_otsu(image=convolution)/15
+    thresh = threshold_otsu(image=convolution)/15 # Use 10 for 20171104, 15 for all other nights
 
     masked = np.ones_like(convolution)
     masked[convolution <= thresh] = 0
@@ -57,7 +57,7 @@ def init_centroids(first_image_path, master_flat, master_dark, target_centroid,
 
     # TYC 3561-1538-1 is a delta Scuti variable. Remove it:
     variable_star = [1790.1645248,  1153.91737674]
-    tol = 5
+    tol = 100
     regions = [region for region in regions
                if ((region.weighted_centroid[0] > variable_star[0] + tol) or
                   (region.weighted_centroid[0] < variable_star[0] - tol)) and

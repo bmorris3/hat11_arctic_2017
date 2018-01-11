@@ -17,7 +17,7 @@ master_dark_path = 'outputs/masterdark_20170615.fits'
 # Photometry settings
 target_centroid = np.array([[613], [750]])
 comparison_flux_threshold = 0.001
-aperture_radii = np.arange(40, 80, 2)
+aperture_radii = np.arange(40, 55, 1)
 centroid_stamp_half_width = 30
 psf_stddev_init = 30
 aperture_annulus_radius = 10
@@ -48,18 +48,42 @@ else:
 
 import astropy.units as u
 print('Calculating PCA...')
-light_curve = PCA_light_curve(phot_results, transit_parameters, plots=True,
+light_curve = PCA_light_curve(phot_results, transit_parameters, plots=False,
                               validation_duration_fraction=0.06,
-                              buffer_time=5*u.min, flux_threshold=0.9,
-                              validation_time=-0.65)#, plot_validation=True)
+                              buffer_time=5*u.min, flux_threshold=0.6,
+                              validation_time=-0.65, plot_validation=False)
 
-plt.figure()
-plt.plot(phot_results.times, light_curve, 'k.')
+# plt.figure()
+# plt.plot(phot_results.times, light_curve, 'k.')
+# plt.plot(phot_results.times, transit_model_b(phot_results.times), 'r')
+# #egress = 2457777.01
+# #post_egress_std = np.std(light_curve[phot_results.times > egress])
+# #plt.axvline(egress)
+# plt.xlabel('Time [JD]')
+# plt.ylabel('Flux')
+# plt.title('rms = {0}'.format(np.std(light_curve - transit_model_b(phot_results.times))))
+# plt.show()
+
+output_lc = 'outputs/hat11_20170615.txt'
+np.savetxt(output_lc, np.vstack([phot_results.times,
+                                 light_curve,
+                                 phot_results.fluxes[:, 0, 0]]).T)
+
+target_flux = phot_results.fluxes[:, 0, 0]
+not_cloudy = target_flux > 0.5*np.median(target_flux)
+
+plt.plot(phot_results.times[not_cloudy], light_curve[not_cloudy], '.', color='gray')
+
+from scipy.stats import binned_statistic
+
+bs = binned_statistic(phot_results.times[not_cloudy], light_curve[not_cloudy], bins=50)
+bin_centers = 0.5*(bs.bin_edges[1:] + bs.bin_edges[:-1])
+plt.plot(bin_centers, bs.statistic, 'rs')
+
 plt.plot(phot_results.times, transit_model_b(phot_results.times), 'r')
 #egress = 2457777.01
 #post_egress_std = np.std(light_curve[phot_results.times > egress])
 #plt.axvline(egress)
 plt.xlabel('Time [JD]')
 plt.ylabel('Flux')
-plt.title('rms = {0}'.format(np.std(light_curve - transit_model_b(phot_results.times))))
 plt.show()

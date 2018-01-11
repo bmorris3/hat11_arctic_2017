@@ -45,21 +45,20 @@ def PCA_light_curve(pr, transit_parameters, buffer_time=5*u.min,
         target_fluxes = pr.fluxes[:, 0, aperture_index]
         target_errors = pr.errors[:, 0, aperture_index]
 
-#       inliers = np.ones_like(pr.fluxes[:, 0, aperture_index]).astype(bool)
-
+        inliers = np.ones_like(pr.fluxes[:, 0, aperture_index]).astype(bool)
         inliers = target_fluxes >= flux_threshold*target_fluxes.max()
-        inliers &= np.arange(len(inliers)) < len(inliers) - 50
-        # inliers = np.ones_like(pr.fluxes[:, 0, aperture_index]).astype(bool)
-
-        for i in range(pr.fluxes.shape[1]):
-            flux_i = pr.fluxes[:, i, aperture_index]
-
-            linear_flux_trend = np.polyval(np.polyfit(pr.times - pr.times.mean(),
-                                                      flux_i, 2),
-                                           pr.times - pr.times.mean())
-            new_inliers = (np.abs(flux_i - linear_flux_trend) < outlier_mad_std_factor *
-                           mad_std(flux_i))
-            inliers &= new_inliers
+        # inliers &= np.arange(len(inliers)) < len(inliers) - 50
+        # # inliers = np.ones_like(pr.fluxes[:, 0, aperture_index]).astype(bool)
+        #
+        # for i in range(pr.fluxes.shape[1]):
+        #     flux_i = pr.fluxes[:, i, aperture_index]
+        #
+        #     linear_flux_trend = np.polyval(np.polyfit(pr.times - pr.times.mean(),
+        #                                               flux_i, 2),
+        #                                    pr.times - pr.times.mean())
+        #     new_inliers = (np.abs(flux_i - linear_flux_trend) < outlier_mad_std_factor *
+        #                    mad_std(flux_i))
+        #     inliers &= new_inliers
         # plt.figure()
         # plt.title('outliers')
         # plt.plot(pr.times, flux_i - linear_flux_trend)
@@ -99,9 +98,13 @@ def PCA_light_curve(pr, transit_parameters, buffer_time=5*u.min,
                                 pr.xcentroids[:, 0, np.newaxis],
                                 pr.ycentroids[:, 0, np.newaxis],
                                 pr.airmass[:, np.newaxis],
+                                #pr.airmass[:, np.newaxis]**2,
                                 pr.airpressure[:, np.newaxis],
                                 pr.humidity[:, np.newaxis],
-                                pr.background_median[:, np.newaxis]
+                                pr.psf_stddev[:, np.newaxis],
+                                pr.background_median[:, np.newaxis],
+                                #pr.altitude[:, np.newaxis],
+                                #pr.altitude[:, np.newaxis]**2,
                                 ])
 
         n_components = np.arange(2, regressors.shape[1])
