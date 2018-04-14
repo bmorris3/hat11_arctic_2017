@@ -56,54 +56,54 @@ light_curve = PCA_light_curve(phot_results, transit_parameters, plots=False,
 target_flux = phot_results.fluxes[:, 0, 0]
 not_cloudy = target_flux > 0.1*np.median(target_flux)
 
-# # further de-trend with airmass:
-#
-# X = np.array([light_curve[not_cloudy],
-#               phot_results.airmass[not_cloudy],
-#               phot_results.ycentroids[:, 0]]).T
-#
-# c = np.linalg.lstsq(X, transit_model_b(phot_results.times[not_cloudy]))[0]
-#
-# detrended_light_curve = np.dot(X, c)
-#
-# plt.plot(phot_results.times[not_cloudy], detrended_light_curve, '.', color='gray')
-#
-# from scipy.stats import binned_statistic
-#
-# bs = binned_statistic(phot_results.times[not_cloudy], detrended_light_curve, bins=50)
-# bin_centers = 0.5*(bs.bin_edges[1:] + bs.bin_edges[:-1])
-# plt.plot(bin_centers, bs.statistic, 'rs')
-#
-# plt.plot(phot_results.times, transit_model_b(phot_results.times), 'r')
-# #egress = 2457777.01
-# #post_egress_std = np.std(light_curve[phot_results.times > egress])
-# #plt.axvline(egress)
-# plt.xlabel('Time [JD]')
-# plt.ylabel('Flux')
-# plt.show()
+# further de-trend with airmass:
 
-output_lc = 'outputs/hat11_20170502.txt'
-np.savetxt(output_lc, np.vstack([phot_results.times,
-                                 light_curve,
-                                 phot_results.fluxes[:, 0, 0]]).T)
+X = np.array([light_curve[not_cloudy],
+              phot_results.airmass[not_cloudy],
+              phot_results.ycentroids[:, 0]]).T
 
-plt.figure()
-plt.plot(phot_results.times, light_curve, '.', color='gray')
-plt.plot(phot_results.times, transit_model_b(phot_results.times), 'r')
+c = np.linalg.lstsq(X, transit_model_b(phot_results.times[not_cloudy]))[0]
+
+detrended_light_curve = np.dot(X, c)
+
+plt.plot(phot_results.times[not_cloudy], detrended_light_curve, '.', color='gray')
 
 from scipy.stats import binned_statistic
 
-bs = binned_statistic(phot_results.times, light_curve, bins=50)
+bs = binned_statistic(phot_results.times[not_cloudy], detrended_light_curve, bins=50)
 bin_centers = 0.5*(bs.bin_edges[1:] + bs.bin_edges[:-1])
 plt.plot(bin_centers, bs.statistic, 'rs')
 
 plt.plot(phot_results.times, transit_model_b(phot_results.times), 'r')
-
-
 #egress = 2457777.01
 #post_egress_std = np.std(light_curve[phot_results.times > egress])
 #plt.axvline(egress)
 plt.xlabel('Time [JD]')
 plt.ylabel('Flux')
-plt.title('rms = {0}'.format(np.std(light_curve - transit_model_b(phot_results.times))))
 plt.show()
+
+output_lc = 'outputs/hat11_20170502.txt'
+np.savetxt(output_lc, np.vstack([phot_results.times,
+                                 detrended_light_curve,
+                                 phot_results.fluxes[:, 0, 0]]).T)
+#
+# plt.figure()
+# plt.plot(phot_results.times, light_curve, '.', color='gray')
+# plt.plot(phot_results.times, transit_model_b(phot_results.times), 'r')
+#
+# from scipy.stats import binned_statistic
+#
+# bs = binned_statistic(phot_results.times, light_curve, bins=50)
+# bin_centers = 0.5*(bs.bin_edges[1:] + bs.bin_edges[:-1])
+# plt.plot(bin_centers, bs.statistic, 'rs')
+#
+# plt.plot(phot_results.times, transit_model_b(phot_results.times), 'r')
+#
+#
+# #egress = 2457777.01
+# #post_egress_std = np.std(light_curve[phot_results.times > egress])
+# #plt.axvline(egress)
+# plt.xlabel('Time [JD]')
+# plt.ylabel('Flux')
+# plt.title('rms = {0}'.format(np.std(light_curve - transit_model_b(phot_results.times))))
+# plt.show()

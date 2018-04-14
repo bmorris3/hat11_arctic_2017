@@ -50,13 +50,13 @@ else:
 print('Calculating PCA...')
 light_curve = PCA_light_curve(phot_results, transit_parameters, plots=False,
                               validation_duration_fraction=0.2,
-                              buffer_time=5*u.min,
+                              buffer_time=5*u.min, flux_threshold=0.5,
                               validation_time=-1.2, plot_validation=False)
 
 plt.figure()
 
 target_flux = phot_results.fluxes[:, 0, 0]
-not_cloudy = target_flux > 0.1*np.median(target_flux)
+not_cloudy = target_flux > 0.05*np.median(target_flux)
 
 # # further de-trend with airmass:
 #
@@ -98,6 +98,17 @@ from scipy.stats import binned_statistic
 bs = binned_statistic(phot_results.times[not_cloudy], light_curve[not_cloudy], bins=50)
 bin_centers = 0.5*(bs.bin_edges[1:] + bs.bin_edges[:-1])
 plt.plot(bin_centers, bs.statistic, 'rs')
+
+
+min_preingress = phot_results.times[not_cloudy].min()
+half_time = np.median(phot_results.times[not_cloudy])
+one_min_bins = np.arange(min_preingress, half_time, 1/60/24)
+bs = binned_statistic(phot_results.times[not_cloudy],
+                      light_curve[not_cloudy], bins=one_min_bins)
+
+bin_centers = 0.5*(bs.bin_edges[1:] + bs.bin_edges[:-1])
+plt.plot(bin_centers, bs.statistic, 'bs', zorder=10)
+print("std 1-min bins: {0}".format(np.std(bs.statistic)))
 
 plt.plot(phot_results.times, transit_model_b(phot_results.times), 'r')
 plt.xlabel('Time [JD]')

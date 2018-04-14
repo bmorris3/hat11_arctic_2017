@@ -200,7 +200,7 @@ def PCA_light_curve(pr, transit_parameters, buffer_time=5*u.min,
 
         if final_lc_mad[aperture_index] == np.min(final_lc_mad):
             final_lc = best_lc.copy()
-
+    print('best aperture: {0}'.format(pr.aperture_radii[aperture_index]))
     if plots:
         # Close all validation plots except the best aperture's
         for i, fig in enumerate(figures):

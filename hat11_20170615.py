@@ -49,9 +49,9 @@ else:
 import astropy.units as u
 print('Calculating PCA...')
 light_curve = PCA_light_curve(phot_results, transit_parameters, plots=False,
-                              validation_duration_fraction=0.06,
-                              buffer_time=5*u.min, flux_threshold=0.6,
-                              validation_time=-0.65, plot_validation=False)
+                              validation_duration_fraction=0.03,
+                              buffer_time=5*u.min, flux_threshold=0.3,
+                              validation_time=-0.6, plot_validation=False)
 
 # plt.figure()
 # plt.plot(phot_results.times, light_curve, 'k.')
@@ -70,15 +70,33 @@ np.savetxt(output_lc, np.vstack([phot_results.times,
                                  phot_results.fluxes[:, 0, 0]]).T)
 
 target_flux = phot_results.fluxes[:, 0, 0]
-not_cloudy = target_flux > 0.5*np.median(target_flux)
+not_cloudy = target_flux > 0.8*np.median(target_flux)
 
-plt.plot(phot_results.times[not_cloudy], light_curve[not_cloudy], '.', color='gray')
+plt.plot(phot_results.times[not_cloudy], light_curve[not_cloudy],
+         '.', color='gray')
 
 from scipy.stats import binned_statistic
 
-bs = binned_statistic(phot_results.times[not_cloudy], light_curve[not_cloudy], bins=50)
+bs = binned_statistic(phot_results.times[not_cloudy],
+                      light_curve[not_cloudy], bins=50)
 bin_centers = 0.5*(bs.bin_edges[1:] + bs.bin_edges[:-1])
 plt.plot(bin_centers, bs.statistic, 'rs')
+
+bs = binned_statistic(phot_results.times[not_cloudy],
+                      light_curve[not_cloudy], bins=50)
+bin_centers = 0.5*(bs.bin_edges[1:] + bs.bin_edges[:-1])
+plt.plot(bin_centers, bs.statistic, 'rs')
+
+
+min_preingress = phot_results.times[not_cloudy].min()
+half_time = np.median(phot_results.times[not_cloudy]) - 0.055
+one_min_bins = np.arange(min_preingress, half_time, 1/60/24)
+bs = binned_statistic(phot_results.times[not_cloudy],
+                      light_curve[not_cloudy], bins=one_min_bins)
+
+bin_centers = 0.5*(bs.bin_edges[1:] + bs.bin_edges[:-1])
+plt.plot(bin_centers, bs.statistic, 'bs', zorder=10)
+print("std 1-min bins: {0}".format(np.nanstd(bs.statistic)))
 
 plt.plot(phot_results.times, transit_model_b(phot_results.times), 'r')
 #egress = 2457777.01

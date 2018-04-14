@@ -7,12 +7,10 @@ import astropy.units as u
 
 __all__ = ['transit_model_b', 'transit_model_b_depth_t0', 'params_b']
 
-# Initialize transit parameter objects with the properties of WASP-85
-# from https://arxiv.org/abs/1508.07281
 # Planet b:
 params_b = batman.TransitParams()
 params_b.per = 4.88780258
-params_b.t0 = 2454605.89155
+params_b.t0 = 2454605.89146
 params_b.inc = 89.3470
 params_b.rp = 0.0034**0.5
 
